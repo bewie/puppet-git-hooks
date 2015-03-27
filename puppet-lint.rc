@@ -1,12 +1,12 @@
-# --no-variable_scope-check
 # --no-hard_tabs-check
 # --no-2sp_soft_tabs-check
-# --no-inherits_across_namespaces-check
 # --no-double_quoted_strings-check
 # --no-unquoted_file_mode-check
 # --no-ensure_first_param-check
 # --no-quoted_booleans-check
 
+--no-inherits_across_namespaces-check
+--no-variable_scope-check
 --no-80chars-check
 --no-autoloader_layout-check
 --no-nested_classes_or_defines-check
