@@ -1,0 +1,20 @@
+# --no-variable_scope-check
+# --no-hard_tabs-check
+# --no-2sp_soft_tabs-check
+# --no-inherits_across_namespaces-check
+# --no-double_quoted_strings-check
+# --no-unquoted_file_mode-check
+# --no-ensure_first_param-check
+# --no-quoted_booleans-check
+
+--no-80chars-check
+--no-autoloader_layout-check
+--no-nested_classes_or_defines-check
+--no-unquoted_resource_title-check
+--no-arrow_alignment-check
+--no-documentation-check
+--no-variables_not_enclosed-check
+--no-names_containing_dash-check
+--no-variable_contains_dash-check
+--no-ensure_not_symlink_target-check
+--no-class_inherits_from_params_class-check
