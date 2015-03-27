@@ -15,8 +15,8 @@ else
   subhook_root="$hook_dir/commit_hooks"
 fi
 
-tmptree=$(mktemp -d)
-
+tmptree="/data/tmp/puppet.$$.tmp"
+mkdir ${tmptree}
 # Prevent tput from throwing an error by ensuring that $TERM is always set
 if [ -z "$TERM" ]; then
     TERM=dumb
@@ -24,7 +24,7 @@ fi
 export TERM
 
 while read oldrev newrev refname; do
-    git archive $newrev | tar x -C ${tmptree}
+    #git archive $newrev | tar x -C ${tmptree}
 
 		# for a new branch oldrev is 0{40}, set newrev to branch name and oldrev to parent branch
 		if [[ $oldrev == "0000000000000000000000000000000000000000" ]]; then
@@ -33,11 +33,16 @@ while read oldrev newrev refname; do
 		fi
 
     for changedfile in $(git diff --name-only $oldrev $newrev --diff-filter=ACM); do
-        tmpmodule="$tmptree/$changedfile"
+	file=`mktemp tmp.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
+        tmpmodule="${tmptree}/${file}"
+	#echo "tmp dir $tmptree"
+	git show $newrev:$changedfile > $tmpmodule
+        #echo $tmpmodule
+	#echo "tmpfile: $tmpmodule"
         #check puppet manifest syntax
         if type puppet >/dev/null 2>&1; then
             if [ $(echo $changedfile | grep -q '\.*.pp$'; echo $?) -eq 0 ]; then
-                ${subhook_root}/puppet_manifest_syntax_check.sh $tmpmodule "${tmptree}/" ${parser}
+                ${subhook_root}/puppet_manifest_syntax_check.sh $tmpmodule "${tmptree}/" ${changedfile} ${parser}
                 RC=$?
                 if [ "$RC" -ne 0 ]; then
                     failures=`expr $failures + 1`
@@ -51,7 +56,7 @@ while read oldrev newrev refname; do
             #check erb (template file) syntax
             if type erb >/dev/null 2>&1; then
                 if [ $(echo $changedfile | grep -q '\.*.erb$'; echo $?) -eq 0 ]; then
-                    ${subhook_root}/erb_template_syntax_check.sh $tmpmodule "${tmptree}/"
+                    ${subhook_root}/erb_template_syntax_check.sh $tmpmodule $changedfile
                     RC=$?
                     if [ "$RC" -ne 0 ]; then
                         failures=`expr $failures + 1`
@@ -60,24 +65,6 @@ while read oldrev newrev refname; do
             else
                 echo "erb not installed. Skipping erb template checks..."
             fi
-
-             #check (yaml/yml) syntax
-            if [ $(echo $changedfile | grep -q '\.*.yaml$\|\.*.yml$'; echo $?) -eq 0 ]; then
-                ${subhook_root}/yaml_syntax_check.sh $tmpmodule "${tmptree}/"
-                RC=$?
-                if [ "$RC" -ne 0 ]; then
-                    failures=`expr $failures + 1`
-                fi
-            fi
-        
-            #check (json) syntax
-            if [ $(echo $changedfile | grep -q '\.*.json$'; echo $?) -eq 0 ]; then
-                ${subhook_root}/json_syntax_check.sh $tmpmodule "${tmptree}/"
-                RC=$?
-                if [ "$RC" -ne 0 ]; then
-                    failures=`expr $failures + 1`
-                fi
-            fi
         else
             echo "ruby not installed. Skipping erb checks..."
         fi
@@ -85,7 +72,7 @@ while read oldrev newrev refname; do
         #puppet manifest styleguide compliance
         if type puppet-lint >/dev/null 2>&1; then
             if [ $(echo $changedfile | grep -q '\.*.pp$' ; echo $?) -eq 0 ]; then 
-                ${subhook_root}/puppet_lint_checks.sh $tmpmodule "${tmptree}/"
+                ${subhook_root}/puppet_lint_checks.sh $tmpmodule "${tmptree}/" $changedfile
                 RC=$?
                 if [ "$RC" -ne 0 ]; then
                     failures=`expr $failures + 1`

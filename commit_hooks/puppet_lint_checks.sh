@@ -3,10 +3,10 @@
 # This script expects $1 to be passed and for $1 to be the filesystem location
 # to a puppet manifest file for which it will run style guide checks against.
 
-manifest_path="$1"
 module_dir="$2"
+manifest_path="$3"
 
-lint_options='--no-80chars-check --no-autoloader_layout-check --no-nested_classes_or_defines-check --no-unquoted_resource_title-check --no-arrow_alignment-check --no-documentation-check --no-variables_not_enclosed-check --no-names_containing_dash-check --no-variable_contains_dash-check --no-ensure_not_symlink_target-check --no-class_inherits_from_params_class-check'
+lint_options='--no-variable_scope-check --no-inherits_across_namespaces-check --no-80chars-check --no-autoloader_layout-check --no-nested_classes_or_defines-check --no-unquoted_resource_title-check --no-arrow_alignment-check --no-documentation-check --no-variables_not_enclosed-check --no-names_containing_dash-check --no-variable_contains_dash-check --no-ensure_not_symlink_target-check --no-class_inherits_from_params_class-check'
 
 syntax_errors=0
 error_msg=$(mktemp /tmp/error_msg_puppet-lint.XXXXX)

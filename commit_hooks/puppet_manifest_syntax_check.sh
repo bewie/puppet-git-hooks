@@ -3,9 +3,9 @@
 # This script expects $1 to be passed and for $1 to be the filesystem location
 # to a puppet manifest file for which it will run syntax checks against.
 
-manifest_path="$1"
 module_dir="$2"
-parser="$3"
+manifest_path="$3"
+parser="$4"
 
 syntax_errors=0
 error_msg=$(mktemp /tmp/error_msg_puppet-syntax.XXXXX)

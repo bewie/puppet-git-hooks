@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # This script expects $1 to be passed and for $1 to be the filesystem location
-# to an ERB file for which it will run syntax checks against. If $2 is passed,
-# it will be stripped off of the path to provide prettier output, which is
-# particularly useful for server-side hooks when tempdirs are created.
+# to an ERB file for which it will run syntax checks against. 
 
 syntax_errors=0
 error_msg=$(mktemp /tmp/error_msg_erb-syntax.XXXXX)
 
 if [ $2 ]; then
-    module_path=$(echo $1 | sed -e 's|'$2'||')
+    module_path=$2
 else
-    module_path=$1
+   module_path=$1
 fi
+
 
 # Check ERB template syntax
 echo -e "$(tput setaf 6)Checking erb template syntax for $module_path...$(tput sgr0)"
