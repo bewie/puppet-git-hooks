@@ -41,7 +41,7 @@ while read oldrev newrev refname; do
 	#echo "tmpfile: $tmpmodule"
         #check puppet manifest syntax
         if type puppet >/dev/null 2>&1; then
-            if [ $(echo $changedfile | grep -q '.*\.pp$'; echo $?) -eq 0 ]; then
+            if [ $(echo $changedfile | grep -q '.*\/manifests\/.*\.pp$'; echo $?) -eq 0 ]; then
                 ${subhook_root}/puppet_manifest_syntax_check.sh $tmpmodule "${tmptree}/" ${changedfile} ${parser}
                 RC=$?
                 if [ "$RC" -ne 0 ]; then
@@ -71,7 +71,7 @@ while read oldrev newrev refname; do
 
         #puppet manifest styleguide compliance
         if type puppet-lint >/dev/null 2>&1; then
-            if [ $(echo $changedfile | grep -q '.*\.pp$' ; echo $?) -eq 0 ]; then 
+            if [ $(echo $changedfile | grep -q '.*\/manifests\/.*\.pp$'; echo $?) -eq 0 ]; then
                 ${subhook_root}/puppet_lint_checks.sh $tmpmodule "${tmptree}/" $changedfile
                 RC=$?
                 if [ "$RC" -ne 0 ]; then
